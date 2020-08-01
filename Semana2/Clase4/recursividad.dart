@@ -1,15 +1,32 @@
 void main(List<String> args) {
   // print(factorialRecursivo(5));
 
-  print(fibonacci(10));
-  print(fibonacciBucle(10));
+  // print(fibonacci(10));
+  // print(fibonacciBucle(10));
+  // print(412 % 184);
+
+  print(maxCDRecursivo(1000004, 1000003));
+  print(maxCDEuclidesFor(1000004, 1000003));
 }
 
-int maxComunDivisor(int num1, int num2) {
-  int numeroMenor = num1;
-  if (num1 > num2) {
-    numeroMenor = num2;
+int maxCDEuclidesFor(int num1, int num2) {
+  while (num1 % num2 != 0) {
+    num2 = num1 % num2;
+    num1 = num2;
   }
+
+  return num2;
+}
+
+int maxCDRecursivo(int num1, int num2) {
+  if (num1 % num2 == 0) {
+    return num2;
+  }
+
+  num2 = num1 % num2;
+  num1 = num2;
+
+  return maxCDRecursivo(num1, num2);
 }
 
 int maximoComunDivisor(int numero1, int numero2) {
@@ -28,20 +45,23 @@ int maximoComunDivisor(int numero1, int numero2) {
 
 int fibonacciBucle(int numero) {
   int fibonacci = 0;
+  int numeroAnterior;
+  int numeroAnteAnterior;
+
   if (numero == 0) {
-    fibonacci = 0;
+    return 0;
   }
   if (numero == 1) {
-    fibonacci = 1;
+    return 1;
   }
-
-  int inicioFibonacci = 2;
-  fibonacci = inicioFibonacci;
-
-  while (inicioFibonacci <= numero) {
-    fibonacci = inicioFibonacci;
-    fibonacci = inicioFibonacci - 1 + inicioFibonacci - 2;
-    inicioFibonacci++;
+  int contador = 2;
+  numeroAnteAnterior = 0;
+  numeroAnterior = 1;
+  while (contador <= numero) {
+    fibonacci = numeroAnterior + numeroAnteAnterior;
+    numeroAnteAnterior = numeroAnterior;
+    numeroAnterior = fibonacci;
+    contador++;
   }
   return fibonacci;
 }
