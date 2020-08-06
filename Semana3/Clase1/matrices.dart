@@ -135,3 +135,5 @@ List transpuesta(List lista) {
   }
   return transpuesta;
 }
+
+List esTriangularSuperior(List lista) {}
