@@ -4,8 +4,11 @@ void main(List<String> args) {
   l.insertarFin(16);
   l.insertarFin(17);
   l.insertarFin(18);
+  l.insertarPosicion(20, 4);
+  l.insertarPosicion(24, 5);
   l.insertarFin(19);
   l.insertarInicio(14);
+  l.eliminarPrimero();
   l.imprimir();
 }
 
@@ -36,6 +39,10 @@ class ListaS<T> {
     }
   }
 
+  void eliminarPrimero() {
+    inicio = inicio.siguiente;
+  }
+
   void insertarFin(T valor) {
     Nodo<T> n = Nodo(valor: valor);
     if (fin == null) {
@@ -47,5 +54,16 @@ class ListaS<T> {
     }
   }
 
-  void insertarPosicion(T valor, int posicion) {}
+  void insertarPosicion(T valor, int posicion) {
+    if (posicion == 0) {
+      insertarInicio(valor);
+    } else {
+      Nodo<T> actual = inicio;
+      for (var i = 1; i < posicion && actual.siguiente != null; i++) {
+        actual = actual.siguiente;
+      }
+      Nodo<T> n = Nodo(valor: valor, siguiente: actual.siguiente);
+      actual.siguiente = n;
+    }
+  }
 }
