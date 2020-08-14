@@ -1,0 +1,9 @@
+graph {Tony15 -- Tony15;
+Tony15 -- Bel10;
+Bel10 -- Lili7;
+Lili7 -- Titi5;
+Lili7 -- Flavio9;
+Bel10 -- Jeampi11;
+Jeampi11 -- Pedro14;
+Tony15 -- Lufa18;
+}
