@@ -6,8 +6,8 @@ class Persona {
 
   bool operator >(Persona p) => id > p.id;
 
-  @override
-  bool operator ==(Persona p) => id == p.id;
+  // @override
+  // bool operator ==(Persona p) => id == p.id;
 
   @override
   String toString() {
