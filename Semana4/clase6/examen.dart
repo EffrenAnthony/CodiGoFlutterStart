@@ -1,7 +1,7 @@
 import 'dart:io';
 
 main(List<String> args) {
-  List hola = ['hola', 'perro', 'come', 'gato'];
+  List hola = ['hola', 'perro', 'come', 'gato', 'animal'];
   invertirLista(hola);
   print('-' * 50);
   List lista = crearLista(3);
@@ -11,8 +11,9 @@ main(List<String> args) {
 
 List invertirLista(List lista) {
   List listaInvertida = [];
-  for (var i = lista.length - 1; i >= 0; i--) {
-    listaInvertida.add(lista[i]);
+  // for (var i = lista.length - 1; i >= 0; i--) {
+  for (var i = 0; i < lista.length; i++) {
+    listaInvertida.add(lista[lista.length - i - 1]);
   }
   print('Lista Invertida $listaInvertida');
   return listaInvertida;

@@ -1,88 +1,84 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:prueba_codigo/widgets/imagen.dart';
+// import './widgets/texto.dart';
 
-void main() {
-  runApp(MyApp(
-    nombre: 'Tony',
-  ));
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  String nombre;
-  MyApp({this.nombre});
-  // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'nombre'),
-    );
+    return MaterialApp(home: WidgetsPrueba());
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
+class WidgetsPrueba extends StatelessWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    // return Scaffold(body: TextoPrueba());
+    return Scaffold(body: ImageButtonPrueba());
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
+class MyPage extends StatelessWidget {
+  void contactanos(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Contactanos'),
+            content: Text('+51 993026178'),
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    // MaterialApp es el estilo de App que tendremos
     return Scaffold(
+      // Scaffold es el empaquetado de la app
+      // App bar es el titel de la parte superior
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('Codigo Flutter'),
+        backgroundColor: Colors.redAccent,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Haz presionado las veces que dice aca pe mascot',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          // Column es un widget que tiene como parametro children que es una lista, y que se extiende a lo largo
+          child: Column(
+            children: [
+              Text(
+                'Hola Tony',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+                textDirection: TextDirection.ltr,
+              ),
+              Text(
+                'Vamos a Programar',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purpleAccent,
+                ),
+                textDirection: TextDirection.ltr,
+              ),
+              Image.network(
+                'https://images.pexels.com/photos/803940/pexels-photo-803940.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+                height: 300,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Presioname'),
+                  onPressed: () => contactanos(context),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: _incrementCounter,
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          ),
-          FloatingActionButton(
-            onPressed: _decrementCounter,
-            tooltip: 'Decrement',
-            child: Icon(Icons.remove),
-          ),
-        ],
       ),
     );
   }
