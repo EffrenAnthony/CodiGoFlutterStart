@@ -18,7 +18,7 @@ class ImageButtonPrueba extends StatelessWidget {
               color: Colors.blueAccent,
             ),
             Image.network(
-              'https://images.pexels.com/photos/803940/pexels-photo-803940.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+              "https://images.pexels.com/photos/803940/pexels-photo-803940.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
               height: 100,
             ),
             FlatButton(

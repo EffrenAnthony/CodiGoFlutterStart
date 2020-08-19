@@ -1,84 +1,150 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prueba_codigo/widgets/imagen.dart';
-// import './widgets/texto.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: WidgetsPrueba());
+    return MaterialApp(home: PaginaPerfil());
   }
 }
 
-class WidgetsPrueba extends StatelessWidget {
+class PaginaPerfil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(body: TextoPrueba());
-    return Scaffold(body: ImageButtonPrueba());
-  }
-}
-
-class MyPage extends StatelessWidget {
-  void contactanos(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Contactanos'),
-            content: Text('+51 993026178'),
-          );
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // MaterialApp es el estilo de App que tendremos
     return Scaffold(
-      // Scaffold es el empaquetado de la app
-      // App bar es el titel de la parte superior
-      appBar: AppBar(
-        title: Text('Codigo Flutter'),
-        backgroundColor: Colors.redAccent,
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          // Column es un widget que tiene como parametro children que es una lista, y que se extiende a lo largo
-          child: Column(
+      body: Stack(
+        children: [
+          Container(
+            height: 200,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.indigoAccent.shade100,
+                  Colors.indigoAccent.shade700,
+                ],
+              ),
+            ),
+          ),
+          Column(
             children: [
-              Text(
-                'Hola Tony',
-                style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                ),
-                textDirection: TextDirection.ltr,
-              ),
-              Text(
-                'Vamos a Programar',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.purpleAccent,
-                ),
-                textDirection: TextDirection.ltr,
-              ),
-              Image.network(
-                'https://images.pexels.com/photos/803940/pexels-photo-803940.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                height: 300,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                  child: Text('Presioname'),
-                  onPressed: () => contactanos(context),
+              buildHeader(context),
+              Container(
+                margin: EdgeInsets.only(top: 10),
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Collection',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      Text('Create new'),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Container buildHeader(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 60),
+      height: 240,
+      // El stack permite superponer elementos, es una lsita con elementos donde todos empiezan al mismo nivel
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 30.0, right: 40, top: 40),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              elevation: 10,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Text(
+                    'Anthony Peña',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('CEO | PooPaye SAC'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    height: 50,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              '32',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              'posts'.toUpperCase(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              '32',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              'posts'.toUpperCase(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              '32',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              'posts'.toUpperCase(),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Material(
+              elevation: 5,
+              shape: CircleBorder(),
+              child: CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(
+                    'https://live.staticflickr.com/65535/50242998231_11e10a6261_c.jpg'),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
