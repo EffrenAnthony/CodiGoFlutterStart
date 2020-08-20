@@ -1,147 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: PaginaPerfil());
+    return MaterialApp(home: PaginaPerfil2());
   }
 }
 
-class PaginaPerfil extends StatelessWidget {
+class PaginaPerfil2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.indigoAccent.shade100,
-                  Colors.indigoAccent.shade700,
-                ],
-              ),
-            ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {},
           ),
-          Column(
-            children: [
-              buildHeader(context),
-              Container(
-                margin: EdgeInsets.only(top: 10),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Collection',
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      Text('Create new'),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () {},
           ),
         ],
       ),
-    );
-  }
-
-  Container buildHeader(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 60),
-      height: 240,
-      // El stack permite superponer elementos, es una lsita con elementos donde todos empiezan al mismo nivel
-      child: Stack(
+      body: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 40, top: 40),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              elevation: 10,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Anthony Peña',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text('CEO | PooPaye SAC'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            title: Text(
-                              '32',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              'posts'.toUpperCase(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListTile(
-                            title: Text(
-                              '32',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              'posts'.toUpperCase(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListTile(
-                            title: Text(
-                              '32',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              'posts'.toUpperCase(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(80),
+                  bottomRight: Radius.circular(80)),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.pink.shade400,
+                  Colors.orangeAccent.shade100,
                 ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
+            height: 400,
           ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Material(
-              elevation: 5,
-              shape: CircleBorder(),
-              child: CircleAvatar(
-                radius: 40,
-                backgroundImage: NetworkImage(
-                    'https://live.staticflickr.com/65535/50242998231_11e10a6261_c.jpg'),
-              ),
+          Container(
+            margin: EdgeInsets.only(top: 100),
+            child: Column(
+              children: [
+                Text(
+                  'Date mate',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                Stack(
+                  children: [
+                    Container(
+                      height: 240,
+                      margin:
+                          const EdgeInsets.only(left: 30, right: 30, top: 30),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(30),
+                        child: Image.network(
+                          'https://images.pexels.com/photos/372042/pexels-photo-372042.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                              color: Colors.yellowAccent,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Text(
+                            '3.7 km away',
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Vanessa - 25',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  // dentor del row y el column puede poenrse este mainxis y el crossaxis
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 17,
+                      color: Colors.grey,
+                    ),
+                    Text(
+                      'San Francisco California USA',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(FontAwesomeIcons.instagram),
+                    SizedBox(width: 25),
+                    Icon(FontAwesomeIcons.facebookF),
+                    SizedBox(width: 25),
+                    Icon(FontAwesomeIcons.twitter),
+                  ],
+                )
+              ],
             ),
           ),
         ],
