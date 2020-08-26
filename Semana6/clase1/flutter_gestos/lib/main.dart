@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // is not restarted.
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -25,41 +26,153 @@ class DemoInputs extends StatefulWidget {
 }
 
 class _DemoInputsState extends State<DemoInputs> {
-  String valorTexto = '';
-  String textoInvertido = '';
+  String texto = "";
+  int valorRadio = 0;
+  String valorDropdown = "Manzana";
+  List<int> valoresCheckbox = [];
+  TextEditingController _controller = TextEditingController();
+
+  void cambioValorTexto() {
+    print(_controller.text);
+    setState(() {
+      texto = _controller.text;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(cambioValorTexto);
+    print("Creando widget");
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(cambioValorTexto);
+    print("Murio widget");
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // este controlador, se encarga de controlar el estado del textflied
-    TextEditingController _controller =
-        TextEditingController(text: 'Escribe algo...');
+    print("volviendo a dibujar");
     return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          buildTextInput(),
+          Text(texto.split('').reversed.join()),
+          buildRadio(1),
+          buildRadio(2),
+          buildRadio(3),
+          buildDropdownButton(),
+          Checkbox(
+              value: valoresCheckbox.contains(1),
+              onChanged: (selected) {
+                setState(() {
+                  if (selected) {
+                    valoresCheckbox.add(1);
+                  } else {
+                    valoresCheckbox.remove(1);
+                  }
+                });
+              }),
+          Checkbox(
+              value: valoresCheckbox.contains(2),
+              onChanged: (selected) {
+                setState(() {
+                  if (selected) {
+                    valoresCheckbox.add(2);
+                  } else {
+                    valoresCheckbox.remove(2);
+                  }
+                });
+              })
+        ],
+      ),
+    );
+  }
+
+  DropdownButton<String> buildDropdownButton() {
+    return DropdownButton(
+        value: valorDropdown,
+        items: [
+          DropdownMenuItem(
+            value: "Manzana",
+            child: Text("Manzana"),
+          ),
+          DropdownMenuItem(
+            value: "Pera",
+            child: Text("Pera"),
+          ),
+        ],
+        onChanged: (value) {
+          setState(() {
+            valorDropdown = value;
+          });
+        });
+  }
+
+  Radio<int> buildRadio(int value) {
+    return Radio(
+        value: value,
+        groupValue: valorRadio,
+        onChanged: (i) {
+          setState(() {
+            valorRadio = i;
+          });
+        });
+  }
+
+  Row buildTextInput() {
+    return Row(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _controller,
+        Expanded(
+          child: TextField(
+            inputFormatters: [
+              TextInputFormatter.withFunction(
+                (oldValue, newValue) {
+                  return newValue.copyWith(text: newValue.text.toUpperCase());
+                },
+              ),
+            ],
+            maxLength: 10,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.ac_unit),
+              labelText: "Ingrese texto",
+              hintText: "Ingrese su texto a invertir",
+              helperText: "Esta es una ayuda",
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(15),
+                ),
               ),
             ),
-            RaisedButton(
-              onPressed: () {
-                setState(() {
-                  valorTexto = _controller.text;
-                  // String invertido = '';
-                  // for (var i = 0; i < valorTexto.length; i++) {
-                  //   invertido += valorTexto[valorTexto.length - 1 - i];
-                  // }
-                  // textoInvertido = invertido;
-                });
-              },
-              child: Text('prueba'),
-            )
-          ],
+            keyboardType: TextInputType.name,
+            onChanged: (v) {
+              print("cambio $v");
+            },
+            onEditingComplete: () {
+              print("termino de editarse");
+            },
+            onSubmitted: (v) {
+              print("envio $v");
+            },
+            controller: _controller,
+          ),
         ),
-        Text(valorTexto.split('').reversed.join())
+        RaisedButton(
+          child: Text("Prueba"),
+          onPressed: () {},
+        )
       ],
-    ));
+    );
   }
 }
