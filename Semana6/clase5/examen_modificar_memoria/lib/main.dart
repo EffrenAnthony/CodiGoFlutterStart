@@ -31,8 +31,14 @@ class _MemoriaState extends State<Memoria> {
   int cantidadTarjetas = 10;
   double cantMovimientos = 0;
   double puntaje = 0;
+  List<int> valoresGanador = [];
+  // int cantValores = 5;
+
   int primerValor = -1;
   int segundoValor = -1;
+  int tercerValor = -1;
+  int cuartoValor = -1;
+  int quintoValor = -1;
   List<String> imagenesCards = [
     "https://img.icons8.com/bubbles/2x/jake.png",
     "https://img.icons8.com/bubbles/2x/futurama-bender.png",
@@ -61,21 +67,67 @@ class _MemoriaState extends State<Memoria> {
   }
 
   void verificarTarjetas() {
-    if (primerValor != segundoValor &&
+    bool todosValoresDiferentes = primerValor != segundoValor &&
+        primerValor != tercerValor &&
+        primerValor != cuartoValor &&
+        primerValor != quintoValor &&
+        segundoValor != tercerValor &&
+        segundoValor != cuartoValor &&
+        segundoValor != quintoValor &&
+        tercerValor != cuartoValor &&
+        tercerValor != quintoValor &&
+        cuartoValor != quintoValor;
+
+    bool datosIguales =
+        tarjetas[primerValor].dato == tarjetas[segundoValor].dato ||
+            tarjetas[primerValor].dato == tarjetas[tercerValor].dato ||
+            tarjetas[primerValor].dato == tarjetas[cuartoValor].dato ||
+            tarjetas[primerValor].dato == tarjetas[quintoValor].dato ||
+            tarjetas[segundoValor].dato == tarjetas[tercerValor].dato ||
+            tarjetas[segundoValor].dato == tarjetas[cuartoValor].dato ||
+            tarjetas[segundoValor].dato == tarjetas[quintoValor].dato ||
+            tarjetas[tercerValor].dato == tarjetas[cuartoValor].dato ||
+            tarjetas[tercerValor].dato == tarjetas[quintoValor].dato ||
+            tarjetas[cuartoValor].dato == tarjetas[quintoValor].dato;
+
+    if (todosValoresDiferentes &&
         primerValor != -1 &&
         segundoValor != -1 &&
-        tarjetas[primerValor].dato == tarjetas[segundoValor].dato) {
+        tercerValor != -1 &&
+        cuartoValor != -1 &&
+        quintoValor != -1 &&
+        !datosIguales) {
       tarjetas[primerValor].puedeVoltearse = false;
       tarjetas[segundoValor].puedeVoltearse = false;
+      tarjetas[tercerValor].puedeVoltearse = false;
+      tarjetas[cuartoValor].puedeVoltearse = false;
+      tarjetas[quintoValor].puedeVoltearse = false;
+
+      // primerValor = -1;
+      // segundoValor = -1;
+      // tercerValor = -1;
+      // cuartoValor = -1;
+      // quintoValor = -1;
+    } else if ((segundoValor != -1 ||
+            tercerValor != -1 ||
+            cuartoValor != -1 ||
+            quintoValor != -1) &&
+        datosIguales) {
       primerValor = -1;
       segundoValor = -1;
-    } else if (segundoValor != -1) {
-      primerValor = -1;
-      segundoValor = -1;
+      tercerValor = -1;
+      cuartoValor = -1;
+      quintoValor = -1;
       voltearTarjetas();
     }
 
-    if (tarjetas.every((element) => !element.puedeVoltearse)) {
+    if (tarjetas[primerValor].puedeVoltearse == false &&
+            tarjetas[segundoValor].puedeVoltearse == false &&
+            tarjetas[tercerValor].puedeVoltearse == false &&
+            tarjetas[cuartoValor].puedeVoltearse == false &&
+            tarjetas[quintoValor].puedeVoltearse == false
+        // tarjetas.every((element) => !element.puedeVoltearse)
+        ) {
       Toast.show("Ganamos", context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       timer.cancel();
@@ -83,6 +135,7 @@ class _MemoriaState extends State<Memoria> {
   }
 
   void refrescarTarjetas() {
+    // valores.fillRange(0,cantValores,-1);
     if (cantidadTarjetas % 2 == 0) {
       tarjetas = [
         for (double i = 0; i < cantidadTarjetas; i += 1)
@@ -91,6 +144,9 @@ class _MemoriaState extends State<Memoria> {
       tarjetas.shuffle();
       primerValor = -1;
       segundoValor = -1;
+      tercerValor = -1;
+      cuartoValor = -1;
+      quintoValor = -1;
       cantMovimientos = 0;
       voltearTarjetas();
       iniciarTimer();
@@ -151,9 +207,18 @@ class _MemoriaState extends State<Memoria> {
                           if (primerValor == -1) {
                             primerValor = index;
                             print('primer valor = $primerValor');
-                          } else {
+                          } else if (segundoValor == -1) {
                             segundoValor = index;
                             print('segundo valor = $segundoValor');
+                          } else if (tercerValor == -1) {
+                            tercerValor = index;
+                            print('tercer valor = $tercerValor');
+                          } else if (cuartoValor == -1) {
+                            cuartoValor = index;
+                            print('cuarto valor = $cuartoValor');
+                          } else if (quintoValor == -1) {
+                            quintoValor = index;
+                            print('quinto valor = $quintoValor');
                           }
                           verificarTarjetas();
                           cantMovimientos += 0.5;
