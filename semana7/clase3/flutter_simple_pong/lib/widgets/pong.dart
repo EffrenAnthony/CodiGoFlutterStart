@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_pong/widgets/ball.dart';
 import 'package:flutter_simple_pong/widgets/bat.dart';
@@ -16,13 +19,18 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
   int movX = 1;
   int movY = 1;
 
+  double randX = 0;
+  double randY = 0;
+
   double width = 0;
   double height = 0;
   double posX = 0;
   double posY = 0;
-  double batWitdth = 0;
+  double batWidth = 0;
   double batHeight = 0;
   double batPosition = 0;
+  int score = 0;
+  int live = 3;
 
   @override
   void initState() {
@@ -33,33 +41,86 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
       duration: Duration(hours: 1),
     );
     animation = Tween(begin: 0.0, end: 100.0).animate(controller);
+    // ? El init state solo ocurre una vez, pero con el lisener permite que cambie la pantalla cada vez que se haga un setState
     animation.addListener(() {
       setState(() {
-        posX += movX;
-        posY += movY;
+        posX += movX * 5 * randX;
+        posY += movY * 5 * randY;
       });
       checkBorders();
     });
-    //
     controller.forward();
     super.initState();
   }
 
   void checkBorders() {
-    if (posX >= width - (50)) {
+    if (posX >= width - 50) {
+      setState(() {
+        randX = (Random().nextInt(10) + 1) / 10;
+        randY = (Random().nextInt(10) + 1) / 10;
+      });
       movX = -1;
     }
-    if (posY >= height - (50)) {
+
+    // Llegando abajo
+    if (posY >= height - 50 - batHeight - 50) {
+      setState(() {
+        randX = (Random().nextInt(10) + 1) / 10;
+        randY = (Random().nextInt(10) + 1) / 10;
+      });
+
       movY = -1;
+      if (batPosition <= posX && batPosition + batWidth >= posX) {
+        setState(() {
+          score++;
+        });
+      } else {
+        live--;
+        if (live <= 0) {
+          controller.stop();
+          showLoseDialog();
+        }
+      }
     }
+    // Llegando al lado derecho
     if (posX <= 0) {
+      setState(() {
+        randX = (Random().nextInt(10) + 1) / 10;
+        randY = (Random().nextInt(10) + 1) / 10;
+      });
       movX = 1;
     }
+    // Llegando arriba
     if (posY <= 0) {
-      //TODO si la barra esta en la misma posicion debe hacer que la pelota rebote en la barra y seguir su animación
+      setState(() {
+        randX = (Random().nextInt(10) + 1) / 10;
+        randY = (Random().nextInt(10) + 1) / 10;
+      });
       movY = 1;
     }
-    // TODO sino , perder
+  }
+
+  showLoseDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Pediste'),
+          actions: [
+            FlatButton(
+                onPressed: () {
+                  setState(() {
+                    score = 0;
+                    live = 3;
+                  });
+                  controller.forward();
+                  Navigator.pop(context);
+                },
+                child: Text('Reiniciar'))
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -68,10 +129,20 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
       builder: (context, constraints) {
         width = constraints.maxWidth;
         height = constraints.maxHeight;
-        batWitdth = width / 5;
+        batWidth = width / 5;
         batHeight = height / 20;
         return Stack(
           children: [
+            Positioned(
+              child: Text('Vida: $live'),
+              top: 10,
+              left: 10,
+            ),
+            Positioned(
+              child: Text('Score: $score'),
+              top: 10,
+              right: 10,
+            ),
             Positioned(
               top: posY,
               left: posX,
@@ -89,7 +160,7 @@ class _PongState extends State<Pong> with SingleTickerProviderStateMixin {
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 10, right: 10, bottom: 50),
-                  child: Bat(batHeight, batWitdth),
+                  child: Bat(batHeight, batWidth),
                 ),
               ),
             ),
