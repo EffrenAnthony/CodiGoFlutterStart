@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/models/shopping_list.dart';
 import 'package:flutter_grocery_list/routes/items_screen.dart';
 import 'package:flutter_grocery_list/util/dbHelper.dart';
+import 'package:flutter_grocery_list/widgets/shopping_list_dialog.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,24 +24,13 @@ class MyApp extends StatelessWidget {
 }
 
 class GroceryList extends StatelessWidget {
-  const GroceryList({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    // DbHelper helper = DbHelper();
-    // helper.testDb();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Lista de compras'),
-      ),
-      body: ShList(),
-    );
+    return ShList();
   }
 }
 
 class ShList extends StatefulWidget {
-  ShList({Key key}) : super(key: key);
-
   @override
   _ShListState createState() => _ShListState();
 }
@@ -48,7 +38,8 @@ class ShList extends StatefulWidget {
 class _ShListState extends State<ShList> {
   DbHelper helper = DbHelper();
   List<ShoppingList> shoppingList;
-  // nos permite consultar a la base de datos y pintar
+  ShoppingListDialog dialog = ShoppingListDialog();
+
   Future showData() async {
     await helper.openDb();
     shoppingList = await helper.getLists();
@@ -60,40 +51,74 @@ class _ShListState extends State<ShList> {
   @override
   Widget build(BuildContext context) {
     showData();
-    return Column(
-      children: [
-        RaisedButton(onPressed: () async {
-          await helper.insertList(ShoppingList(0, 'Lista Agregada Sape', 1));
-          showData();
-        }),
-        Expanded(
-          child: ListView.builder(
-            itemCount: shoppingList != null ? shoppingList.length : 0,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(
-                  shoppingList[index].name,
-                ),
-                leading: CircleAvatar(
-                  child: Text(
-                    shoppingList[index].priority.toString(),
-                  ),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (c) {
-                        return ItemsScreen(shoppingList[index]);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Lista de compras"),
+      ),
+      body: Column(
+        children: [
+          // RaisedButton(
+          //   onPressed: () async {
+          //     await helper
+          //         .insertList(ShoppingList(0, "Lista Agreada Boton", 1));
+          //     showData();
+          //   },
+          // ),
+          Expanded(
+            child: ListView.builder(
+                itemCount: shoppingList != null ? shoppingList.length : 0,
+                itemBuilder: (context, index) {
+                  return Dismissible(
+                    key: Key(shoppingList[index].name),
+                    background: Container(
+                      color: Colors.red,
+                    ),
+                    onDismissed: (direction) {
+                      String name = shoppingList[index].name;
+                      helper.deleteList(shoppingList[index]);
+                      setState(() {
+                        shoppingList.removeAt(index);
+                      });
+                      // Es como si estuvieramos llamando al metodo de su padre
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text('Eliminado: $name')));
+                    },
+                    child: ListTile(
+                      title: Text(shoppingList[index].name),
+                      leading: CircleAvatar(
+                        child: Text(shoppingList[index].priority.toString()),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => dialog.buildDialog(
+                                  context, shoppingList[index], false));
+                        },
+                      ),
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (c) {
+                            return ItemsScreen(shoppingList[index]);
+                          },
+                        ));
                       },
-                    ));
-                  },
-                ),
-              );
-            },
+                    ),
+                  );
+                }),
           ),
-        ),
-      ],
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) =>
+                  dialog.buildDialog(context, ShoppingList(0, "", 0), true));
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

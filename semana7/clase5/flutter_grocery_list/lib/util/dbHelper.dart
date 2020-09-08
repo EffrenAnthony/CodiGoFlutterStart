@@ -6,6 +6,17 @@ import 'package:path/path.dart';
 class DbHelper {
   int version = 1;
   Database db;
+  // static final hace que la variable sea estatica e inmutable
+  static final DbHelper _dbHelper = DbHelper._internal();
+
+  DbHelper._internal();
+
+  // nos permite que cada vez que llamemos al constructor no crea uno nuevo, sino retorna el constructor que se creo la primera vez
+
+  factory DbHelper() {
+    return _dbHelper;
+  }
+
   // Retornamos un future porque no sabemos cuando va a retornar la info de la base de datos
   // Ek future es un tipo de dato que nos va a dar información pero no sabemos cuadno
   Future<Database> openDb() async {
@@ -71,5 +82,20 @@ class DbHelper {
         maps[i]['note'],
       ),
     );
+  }
+
+  Future<int> deleteList(ShoppingList list) async {
+    int resultItems =
+        await db.delete('items', where: "idList = ?", whereArgs: [list.id]);
+    int result =
+        await db.delete('lists', where: "id = ?", whereArgs: [list.id]);
+    return result;
+  }
+
+  Future<int> deleteItem(ListItem item) async {
+    int resultItems =
+        await db.delete('items', where: "id = ?", whereArgs: [item.id]);
+    print(item.id);
+    return resultItems;
   }
 }
