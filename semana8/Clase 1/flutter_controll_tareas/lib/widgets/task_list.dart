@@ -5,20 +5,26 @@ import 'package:flutter_controll_tareas/util/dbhelper.dart';
 import 'package:flutter_controll_tareas/widgets/subtask_dialog.dart';
 
 class TaskList extends StatefulWidget {
+  int state;
+  TaskList(this.state);
+
   @override
-  _TaskListState createState() => _TaskListState();
+  _TaskListState createState() => _TaskListState(state);
 }
 
 class _TaskListState extends State<TaskList> {
+  int state;
   List<Task> list = List();
   DbHelper helper = DbHelper();
   List<Color> colores = [Colors.red, Colors.amber, Colors.green];
   SubTaskDialog subTaskDialog = SubTaskDialog();
 
+  _TaskListState(this.state);
+
   Future showData() async {
     await helper.openDb();
-    list = await helper.getTasks();
-    for (var i = 0; i < list.length; i++) {
+    list = await helper.getTasks(state);
+    for (int i = 0; i < list.length; i++) {
       list[i].subTasks = await helper.getSubTasks(list[i].id);
     }
     setState(() {
@@ -37,29 +43,75 @@ class _TaskListState extends State<TaskList> {
               title: Text(
                 list[index].id.toString() + " " + list[index].name,
               ),
-              trailing: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (context) => subTaskDialog.buildDialog(
-                        context, SubTask(null, "", "", 0), true, list[index]),
-                  );
-                },
+              trailing: Container(
+                width: 150,
+                child: Row(
+                  children: [
+                    IconButton(
+                        icon: Icon(Icons.arrow_left),
+                        onPressed: () async {
+                          if (list[index].state > 0) {
+                            list[index].state--;
+                            helper.insertTask(list[index]);
+                          }
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.arrow_right),
+                        onPressed: () async {
+                          if (list[index].state < 2) {
+                            list[index].state++;
+                            helper.insertTask(list[index]);
+                          }
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => subTaskDialog.buildDialog(
+                                  context,
+                                  SubTask(null, "", "", 0),
+                                  true,
+                                  list[index]));
+                        }),
+                  ],
+                ),
               ),
             )
           : ExpansionTile(
-              trailing: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (context) => subTaskDialog.buildDialog(
-                        context, SubTask(null, "", "", 0), true, list[index]),
-                  );
-                  // print(await helper.insertSubTask(
-                  //     SubTask(null, 'Prueba', 'prueba', 1), list[index].id));
-                },
+              trailing: Container(
+                width: 150,
+                child: Row(
+                  children: [
+                    IconButton(
+                        icon: Icon(Icons.arrow_left),
+                        onPressed: () async {
+                          if (list[index].state > 0) {
+                            list[index].state--;
+                            helper.insertTask(list[index]);
+                          }
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.arrow_right),
+                        onPressed: () async {
+                          if (list[index].state < 2) {
+                            list[index].state++;
+                            helper.insertTask(list[index]);
+                          }
+                        }),
+                    IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => subTaskDialog.buildDialog(
+                                  context,
+                                  SubTask(null, "", "", 0),
+                                  true,
+                                  list[index]));
+                        }),
+                  ],
+                ),
               ),
               initiallyExpanded: true,
               title: Text(
@@ -71,25 +123,93 @@ class _TaskListState extends State<TaskList> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: list[index].subTasks.length,
-                    itemBuilder: (c, i) => Card(
-                      color: colores[list[index].subTasks[i].state],
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(list[index].subTasks[i].name),
-                              Text(list[index].subTasks[i].priority),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    itemBuilder: (c, i) => buildSubTaskCard(index, i, context),
                   ),
                 ),
               ],
             ),
+    );
+  }
+
+  Card buildSubTaskCard(int index, int i, BuildContext context) {
+    return Card(
+      color: list[index].subTasks[i].state == null
+          ? colores[0]
+          : colores[list[index].subTasks[i].state],
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8, right: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 25,
+              child: Row(
+                children: [
+                  IconButton(
+                      iconSize: 15,
+                      icon: Icon(Icons.edit),
+                      onPressed: () async {
+                        showDialog(
+                            context: context,
+                            builder: (context) => subTaskDialog.buildDialog(
+                                context,
+                                list[index].subTasks[i],
+                                false,
+                                list[index]));
+                      }),
+                  IconButton(
+                      iconSize: 15,
+                      icon: Icon(Icons.delete),
+                      onPressed: () async {
+                        if (list[index].subTasks[i].state == 0) {
+                          helper.deteleSubTask(list[index].subTasks[i]);
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "Elimiada: ${list[index].subTasks[i].name}")));
+                        } else {
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "No se puede elminar tareas en proceso")));
+                        }
+                      })
+                ],
+              ),
+            ),
+            Text(list[index].subTasks[i].name),
+            Text(list[index].subTasks[i].priority),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 25,
+                  child: IconButton(
+                      icon: Icon(Icons.arrow_left),
+                      onPressed: () async {
+                        if (list[index].subTasks[i].state > 0) {
+                          list[index].subTasks[i].state--;
+                          helper.insertSubTask(
+                              list[index].subTasks[i], list[index].id);
+                        }
+                      }),
+                ),
+                Container(
+                  height: 25,
+                  child: IconButton(
+                      icon: Icon(Icons.arrow_right),
+                      onPressed: () async {
+                        if (list[index].subTasks[i].state < 2) {
+                          list[index].subTasks[i].state++;
+                          helper.insertSubTask(
+                              list[index].subTasks[i], list[index].id);
+                        }
+                      }),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

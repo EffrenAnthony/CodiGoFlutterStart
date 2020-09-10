@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_controll_tareas/models/subtask.dart';
 import 'package:flutter_controll_tareas/models/task.dart';
 import 'package:flutter_controll_tareas/util/dbhelper.dart';
 
-class SubTaskDialog {
+class TaskDialog {
   TextEditingController txtName = TextEditingController();
   TextEditingController txtPriority = TextEditingController();
 
-  Widget buildDialog(
-      BuildContext context, SubTask subTask, bool isNew, Task task) {
+  Widget buildDialog(BuildContext context, Task task, bool isNew) {
     if (isNew) {
       txtName.text = "";
       txtPriority.text = "";
     } else {
-      txtName.text = subTask.name;
-      txtPriority.text = subTask.priority;
+      txtName.text = task.name;
+      txtPriority.text = task.priority;
     }
 
     return AlertDialog(
-      title: Text(isNew ? "Nueva SubTarea" : "Editar SubTarea"),
+      title: Text(isNew ? "Nueva Tarea" : "Editar Tarea"),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -40,9 +38,9 @@ class SubTaskDialog {
                 RaisedButton(
                   onPressed: () async {
                     DbHelper helper = DbHelper();
-                    subTask.name = txtName.text;
-                    subTask.priority = txtPriority.text;
-                    await helper.insertSubTask(subTask, task.id);
+                    task.name = txtName.text;
+                    task.priority = txtPriority.text;
+                    await helper.insertTask(task);
                     Navigator.pop(context);
                   },
                   child: Text("OK"),

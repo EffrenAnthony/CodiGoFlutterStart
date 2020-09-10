@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_controll_tareas/models/task.dart';
 import 'package:flutter_controll_tareas/util/dbhelper.dart';
+import 'package:flutter_controll_tareas/widgets/task_dialog.dart';
 import 'package:flutter_controll_tareas/widgets/task_list.dart';
 
 void main() {
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class ControlTareas extends StatelessWidget {
+  TaskDialog taskDialog = TaskDialog();
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -41,11 +44,16 @@ class ControlTareas extends StatelessWidget {
             )
           ]),
         ),
-        body: TabBarView(children: [TaskList(), Text("doing"), Text("done")]),
-        floatingActionButton: FloatingActionButton(onPressed: () {
-          DbHelper helper = DbHelper();
-          helper.testDb();
-        }),
+        body: TabBarView(children: [TaskList(0), TaskList(1), TaskList(2)]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (context) => taskDialog.buildDialog(
+                    context, Task(null, "", "", 0), true));
+          },
+          child: Icon(Icons.add),
+        ),
       ),
     );
   }

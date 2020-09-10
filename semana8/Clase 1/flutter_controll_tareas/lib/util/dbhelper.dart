@@ -36,8 +36,9 @@ class DbHelper {
     print(items[0].toString());
   }
 
-  Future<List<Task>> getTasks() async {
-    List<Map<String, dynamic>> maps = await db.query("tasks");
+  Future<List<Task>> getTasks(int state) async {
+    List<Map<String, dynamic>> maps =
+        await db.query("tasks", where: "state=?", whereArgs: [state]);
     return List.generate(
       maps.length,
       (index) => Task(maps[index]["id"], maps[index]["name"],
@@ -47,7 +48,7 @@ class DbHelper {
 
   Future<List<SubTask>> getSubTasks(int idTask) async {
     List<Map<String, dynamic>> maps =
-        await db.query("subtasks", where: "idTask = ?", whereArgs: [idTask]);
+        await db.query("subtasks", where: "idTask=?", whereArgs: [idTask]);
     return List.generate(
       maps.length,
       (index) => SubTask(maps[index]["id"], maps[index]["name"],
@@ -56,7 +57,20 @@ class DbHelper {
   }
 
   Future<int> insertSubTask(SubTask subTask, int idTask) async {
-    int id = await db.insert("subtasks", subTask.toMap(idTask));
+    int id = await db.insert("subtasks", subTask.toMap(idTask),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  Future<int> insertTask(Task task) async {
+    int id = await db.insert("tasks", task.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return id;
+  }
+
+  Future<int> deteleSubTask(SubTask subTask) async {
+    int id =
+        await db.delete("subtasks", where: "id = ?", whereArgs: [subTask.id]);
     return id;
   }
 }
