@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pokedex/routes/pokemon_detail.dart';
 import 'package:flutter_pokedex/routes/pokemon_types.dart';
 import 'package:flutter_pokedex/util/http_helper.dart';
+import 'package:splashscreen/splashscreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: PokeHome(),
+      home: SplashScreen(
+        imageBackground: AssetImage("assets/pokedex.jpg"),
+        seconds: 2,
+        navigateAfterSeconds: PokeHome(),
+      ),
     );
   }
 }
@@ -30,11 +35,32 @@ class PokeHome extends StatefulWidget {
 class _PokeHomeState extends State<PokeHome> {
   HttpHelper helper;
   String imageUrl = "https://pokeres.bastionbot.org/images/pokemon/";
+  List filteredPokemons = [];
+  List allPokemons = [];
 
   @override
   void initState() {
     helper = HttpHelper();
     super.initState();
+  }
+
+  void filterPokemon(String str) {
+    if (str.length > 0) {
+      filteredPokemons = [];
+      allPokemons.forEach(
+        (element) {
+          if (element.contains(str)) {
+            filteredPokemons.add(element);
+          }
+        },
+      );
+    } else {
+      filteredPokemons = allPokemons;
+    }
+
+    setState(() {
+      filteredPokemons = filteredPokemons;
+    });
   }
 
   @override
@@ -43,40 +69,83 @@ class _PokeHomeState extends State<PokeHome> {
       appBar: AppBar(
         title: Text('Pokedex'),
       ),
-      body: FutureBuilder<List>(
-        future: helper.getPokemons(151),
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.hasData) {
-            List pokemons = snapshot.data;
-            return ListView.builder(
-              itemCount: pokemons.length,
-              itemBuilder: (c, i) {
-                return ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (c) => PokemonDetail(i + 1),
-                      ),
-                    );
-                  },
-                  leading: Text((i + 1).toString()),
-                  title: Text(pokemons[i]),
-                  trailing: Hero(
-                    tag: (i + 1).toString(),
-                    child:
-                        Image.network(imageUrl + (i + 1).toString() + ".png"),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text('Pokecodigo'),
+              accountEmail: null,
+              currentAccountPicture: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        'https://i.ebayimg.com/images/g/CLAAAOxyRhBSq3b5/s-l300.jpg'),
                   ),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.grid_on),
+              title: Text('Tipos'),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PokemonTypes(),
+                    ));
+              },
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          TextField(
+            onChanged: (value) {
+              filterPokemon(value);
+            },
+          ),
+          Expanded(
+            child: FutureBuilder<List>(
+              future: helper.getPokemons(151),
+              builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                if (snapshot.hasData) {
+                  allPokemons = snapshot.data;
+                  List pokemons = filteredPokemons;
+                  return ListView.builder(
+                    itemCount: pokemons.length,
+                    itemBuilder: (c, i) {
+                      // String idPoke = pokemons[i]['url'].split('/')[6].toString();
+                      return ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (c) => PokemonDetail(i + 1),
+                            ),
+                          );
+                        },
+                        leading: Text((i + 1).toString()),
+                        title: Text(pokemons[i]),
+                        trailing: Hero(
+                          tag: (i + 1).toString(),
+                          child: Image.network(
+                              imageUrl + (i + 1).toString() + ".png"),
+                        ),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('No tiene data');
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
                 );
               },
-            );
-          } else if (snapshot.hasError) {
-            return Text('No tiene data');
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.book),

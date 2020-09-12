@@ -11,7 +11,7 @@ Map colorsType = {
   'psychic': Colors.deepPurpleAccent,
   'dragon': Colors.blueGrey,
   'fighting': Colors.red,
-  'electric': Colors.yellow,
+  'electric': Colors.amber,
   'ice': Colors.lightBlue,
   'rock': Colors.brown,
   'fairy': Colors.pinkAccent,
