@@ -49,7 +49,7 @@ class _PokeHomeState extends State<PokeHome> {
       filteredPokemons = [];
       allPokemons.forEach(
         (element) {
-          if (element.contains(str)) {
+          if (element['name'].contains(str)) {
             filteredPokemons.add(element);
           }
         },
@@ -116,7 +116,8 @@ class _PokeHomeState extends State<PokeHome> {
                   return ListView.builder(
                     itemCount: pokemons.length,
                     itemBuilder: (c, i) {
-                      // String idPoke = pokemons[i]['url'].split('/')[6].toString();
+                      String idPoke =
+                          pokemons[i]['url'].split('/')[6].toString();
                       return ListTile(
                         onTap: () {
                           Navigator.push(
@@ -127,11 +128,11 @@ class _PokeHomeState extends State<PokeHome> {
                           );
                         },
                         leading: Text((i + 1).toString()),
-                        title: Text(pokemons[i]),
+                        title: Text(pokemons[i]['name']),
                         trailing: Hero(
                           tag: (i + 1).toString(),
                           child: Image.network(
-                              imageUrl + (i + 1).toString() + ".png"),
+                              imageUrl + idPoke.toString() + ".png"),
                         ),
                       );
                     },

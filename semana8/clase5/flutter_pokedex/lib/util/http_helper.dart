@@ -12,8 +12,10 @@ class HttpHelper {
       var jsonResponse = convert.jsonDecode(response.body);
       List pokemons = jsonResponse['results'];
       List pokemonNames = pokemons.map((e) => e['name']).toList();
-      print(pokemonNames);
-      return pokemonNames;
+      List pokemonsResults = pokemons.map((e) => e).toList();
+      // print(pokemonNames);
+      return pokemonsResults;
+      // return pokemonNames;
     } else {
       print(response.statusCode);
     }
