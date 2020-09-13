@@ -56,43 +56,46 @@ class _PerroDexState extends State<PerroDex> {
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              DogsDetails(snapshot.data[index]),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DogsDetails(snapshot.data[index]),
+                      ),
+                    );
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Center(
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                  dogNames[index].toString().toUpperCase()),
-                            ),
-                            FutureBuilder(
-                              future: helper.getDogImage(dogNames[index]),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Container(
-                                    padding: EdgeInsets.all(8),
-                                    height: 125,
-                                    width: 125,
-                                    child: CircleAvatar(
-                                      backgroundImage:
-                                          NetworkImage(snapshot.data),
-                                    ),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return (snapshot.error);
-                                }
-                                return CircularProgressIndicator();
-                              },
-                            )
-                          ],
+                  child: Hero(
+                    tag: dogNames[index],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        child: Center(
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    dogNames[index].toString().toUpperCase()),
+                              ),
+                              FutureBuilder(
+                                future: helper.getDogImage(dogNames[index]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return Container(
+                                      padding: EdgeInsets.all(8),
+                                      height: 125,
+                                      width: 125,
+                                      child: CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(snapshot.data),
+                                      ),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return (snapshot.error);
+                                  }
+                                  return CircularProgressIndicator();
+                                },
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -108,11 +111,13 @@ class _PerroDexState extends State<PerroDex> {
           return CircularProgressIndicator();
         },
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        setState(() {
-          initState();
-        });
-      }),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.update),
+          onPressed: () {
+            setState(() {
+              initState();
+            });
+          }),
     );
   }
 }

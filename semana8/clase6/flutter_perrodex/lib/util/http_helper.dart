@@ -37,9 +37,9 @@ class HttpHelper {
     var response = await http.get(baseUrl + "/" + breed + "/images/random/16");
     if (response.statusCode == 200) {
       var jsonResponse = convert.jsonDecode(response.body);
-      List url = jsonResponse['message'];
+      List urls = jsonResponse['message'];
 
-      return url;
+      return urls;
     } else {
       print(response.statusCode);
     }

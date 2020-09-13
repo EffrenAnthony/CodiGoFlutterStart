@@ -123,7 +123,8 @@ class _PokeHomeState extends State<PokeHome> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (c) => PokemonDetail(i + 1),
+                              builder: (c) =>
+                                  PokemonDetail(int.tryParse(idPoke)),
                             ),
                           );
                         },

@@ -11,7 +11,6 @@ class DogsDetails extends StatefulWidget {
 
 class _DogsDetailsState extends State<DogsDetails> {
   String breed;
-
   _DogsDetailsState(this.breed);
   HttpHelper helper;
   @override
@@ -36,12 +35,15 @@ class _DogsDetailsState extends State<DogsDetails> {
                 SizedBox(
                   height: 30,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Center(
-                    child: CircleAvatar(
-                      radius: 80,
-                      backgroundImage: NetworkImage(dogImages[0]),
+                Hero(
+                  tag: breed,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Center(
+                      child: CircleAvatar(
+                        radius: 80,
+                        backgroundImage: NetworkImage(dogImages[0]),
+                      ),
                     ),
                   ),
                 ),
