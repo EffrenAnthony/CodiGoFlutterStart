@@ -20,6 +20,9 @@ class LocationView extends StatelessWidget {
           style: TextStyle(
               fontSize: 40, fontWeight: FontWeight.w300, color: Colors.white),
         ),
+        SizedBox(
+          height: 8,
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

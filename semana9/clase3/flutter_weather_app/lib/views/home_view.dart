@@ -3,43 +3,44 @@ import 'package:flutter_weather_app/models/forecast.dart';
 import 'package:flutter_weather_app/models/location.dart';
 import 'package:flutter_weather_app/models/weather.dart';
 import 'package:flutter_weather_app/services/own_api.dart';
+import 'package:flutter_weather_app/viewModels/weather_provider.dart';
+import 'package:flutter_weather_app/views/daily_forecast_view.dart';
 import 'package:flutter_weather_app/views/gradient_container.dart';
+import 'package:flutter_weather_app/views/weather_info.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import 'gradient_container.dart';
 import 'location_view.dart';
 
-class HomeView extends StatefulWidget {
-  @override
-  _HomeViewState createState() => _HomeViewState();
-}
-
-class _HomeViewState extends State<HomeView> {
-  WeatherCondition condition;
-  Location location = new Location(latitude: 0, longitude: 0);
-  String city = "Ciudad";
-
+class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Forecast forecast = Provider.of<WeatherProvider>(context).forecast;
+    Location location = Provider.of<WeatherProvider>(context).location;
+    String city = Provider.of<WeatherProvider>(context).city;
+
     return Scaffold(
       body: _buildGradientContainer(
           true,
-          condition,
+          forecast == null
+              ? WeatherCondition.clear
+              : forecast.current.condition,
           ListView(
             children: [
               Container(
                 margin: EdgeInsets.all(20),
                 padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(3),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 3,
-                        blurRadius: 5,
-                        offset: Offset(0, 3))
-                  ],
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(3),
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          spreadRadius: 3,
+                          blurRadius: 5,
+                          offset: Offset(0, 3))
+                    ]),
                 child: Row(
                   children: [
                     IconButton(
@@ -51,16 +52,8 @@ class _HomeViewState extends State<HomeView> {
                         decoration: InputDecoration.collapsed(
                             hintText: "Ingrese Ciudad"),
                         onSubmitted: (value) async {
-                          city = value;
-                          OpenWeatherMapApi api = OpenWeatherMapApi();
-                          location = await api.getLocation(value);
-                          Forecast f = await api.getForecast(location);
-                          print(f.current.condition.toString());
-                          setState(() {
-                            city = city;
-                            location = location;
-                            condition = f.current.condition;
-                          });
+                          Provider.of<WeatherProvider>(context, listen: false)
+                              .fetchForecast(value);
                         },
                       ),
                     ),
@@ -68,6 +61,34 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
               LocationView(city: city, location: location),
+              SizedBox(
+                height: 24,
+              ),
+              WeatherInfo(forecast: forecast),
+              SizedBox(
+                height: 24,
+              ),
+              Center(
+                child: Text(
+                  forecast != null ? forecast.current.description : "Clima",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 35,
+                      fontWeight: FontWeight.w300),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              DailyForecastView(forecast: forecast),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                  child: forecast != null
+                      ? Text("Last Update: " +
+                          DateFormat.Hm().format(forecast.lastUpdated))
+                      : Text("00:00"))
             ],
           )),
     );
