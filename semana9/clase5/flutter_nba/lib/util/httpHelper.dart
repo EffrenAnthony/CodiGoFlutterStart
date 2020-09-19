@@ -41,9 +41,6 @@ class HttpHelper {
   }
 
   Future<List<Partido>> fetchPartidosPorEquipo(int id) async {
-    // if (equipo == "76ers") equipo = "sixers";
-    // if (equipo == "trail blazers") equipo = "blazers";
-
     var response =
         await http.get(baseUrl + "games?seasons[]=2019&team_ids[]=$id");
     if (response.statusCode == 200) {
