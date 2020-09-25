@@ -25,7 +25,7 @@ SECRET_KEY = '1_2b#te0sk1v-py7i%-s*8tpam0tgm0m@zsr@yyfla)knx(mli'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
