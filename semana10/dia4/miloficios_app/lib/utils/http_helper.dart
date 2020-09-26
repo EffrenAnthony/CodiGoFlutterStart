@@ -18,4 +18,16 @@ class HttpHelper {
     List bannersJson = jsonDecode(response.body);
     return bannersJson.map((e) => BannerPublicitario.fromJson(e)).toList();
   }
+
+  Future<String> iniciarSesion(String username, String password) async {
+    var response = await http.post(urlBase + "token-auth/",
+        body: {"username": username, "password": password});
+    print(response.toString());
+    if (response.statusCode == 200) {
+      String token = jsonDecode(response.body)["token"];
+      print(token.toString());
+      return token;
+    }
+    return "";
+  }
 }

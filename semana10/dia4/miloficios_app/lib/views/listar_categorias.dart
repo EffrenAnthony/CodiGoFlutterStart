@@ -2,8 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:miloficios_app/models/banner.dart';
 import 'package:miloficios_app/models/categoria.dart';
+import 'package:miloficios_app/providers/user_provider.dart';
 import 'package:miloficios_app/utils/http_helper.dart';
+import 'package:miloficios_app/utils/sesion_helper.dart';
 import 'package:miloficios_app/views/listar_subcategoria.dart';
+import 'package:provider/provider.dart';
 
 class Categorias extends StatefulWidget {
   @override
@@ -20,7 +23,23 @@ class _CategoriasState extends State<Categorias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(Provider.of<UserProvider>(context).token),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text('Cerrar Sesion'),
+              onTap: () {
+                // SessionHelper().token = '';
+                Provider.of<UserProvider>(context, listen: false)
+                    .saveUserData('');
+              },
+            )
+          ],
+        ),
+      ),
       body: Center(
         child: Column(
           children: [
@@ -72,7 +91,7 @@ class _CategoriasState extends State<Categorias> {
                     ],
                   );
                 } else if (snapshot.hasError) {
-                  return Text(snapshot.error);
+                  return Text(snapshot.error.toString());
                 }
                 return Center(child: CircularProgressIndicator());
               },
