@@ -102,6 +102,8 @@ class _PokeHomeState extends State<PokeHome> {
       body: Column(
         children: [
           TextField(
+            decoration:
+                InputDecoration(hintText: 'Ingresa el nombre de un pokemon'),
             onChanged: (value) {
               filterPokemon(value);
             },

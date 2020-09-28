@@ -13,12 +13,21 @@ import 'package:provider/provider.dart';
 import 'gradient_container.dart';
 import 'location_view.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
+  @override
+  _HomeViewState createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     Forecast forecast = Provider.of<WeatherProvider>(context).forecast;
     Location location = Provider.of<WeatherProvider>(context).location;
     String city = Provider.of<WeatherProvider>(context).city;
+
+    if (city == null) {
+      city = 'Ve a una ciudad';
+    }
 
     return Scaffold(
       body: _buildGradientContainer(
@@ -53,7 +62,7 @@ class HomeView extends StatelessWidget {
                             hintText: "Ingrese Ciudad"),
                         onSubmitted: (value) async {
                           Provider.of<WeatherProvider>(context, listen: false)
-                              .fetchForecast(value);
+                              .fetchForecast(value == '' ? 'lima' : value);
                         },
                       ),
                     ),
