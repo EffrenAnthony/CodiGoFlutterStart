@@ -15,11 +15,19 @@ class Categorias extends StatefulWidget {
 
 class _CategoriasState extends State<Categorias> {
   int bannerActual = 0;
-  // List<String> banners = [
-  //   'https://image.freepik.com/vector-gratis/plantilla-anuncios-alimentos-hamburguesas_23-2148449854.jpg',
-  //   'https://cdn.goconqr.com/uploads/media/image/22604585/desktop_57e212ea-ddac-40fa-96cb-1dea745fcaa4.jpg',
-  //   'https://image.freepik.com/vector-gratis/anuncio-deliciosa-hamburguesa_52683-4293.jpg'
-  // ];
+
+  @override
+  void initState() {
+    super.initState();
+    consultarInfoUsuario();
+  }
+
+  void consultarInfoUsuario() async {
+    await HttpHelper().consultarUsuario(
+        Provider.of<UserProvider>(context, listen: false).token);
+    Provider.of<UserProvider>(context, listen: false).fetchUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,12 +37,17 @@ class _CategoriasState extends State<Categorias> {
       drawer: Drawer(
         child: ListView(
           children: [
+            UserAccountsDrawerHeader(
+                accountName: Text(
+                    Provider.of<UserProvider>(context, listen: false)
+                        .first_name),
+                accountEmail: Text(
+                    Provider.of<UserProvider>(context, listen: false).email)),
             ListTile(
-              title: Text('Cerrar Sesion'),
+              title: Text("Cerrar Sesión"),
               onTap: () {
-                // SessionHelper().token = '';
                 Provider.of<UserProvider>(context, listen: false)
-                    .saveUserData('');
+                    .saveUserData("");
               },
             )
           ],
@@ -43,82 +56,32 @@ class _CategoriasState extends State<Categorias> {
       body: Center(
         child: Column(
           children: [
-            FutureBuilder(
-              future: HttpHelper().fetchBannersPublicitarios(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<BannerPublicitario> banners = snapshot.data;
-                  return Column(
-                    children: [
-                      CarouselSlider.builder(
-                        options: CarouselOptions(
-                          enlargeCenterPage: true,
-                          viewportFraction: 1,
-                          autoPlay: true,
-                          autoPlayInterval: Duration(seconds: 5),
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              bannerActual = index;
-                            });
-                          },
-                        ),
-                        itemCount: banners.length,
-                        itemBuilder: (BuildContext context, int itemIndex) =>
-                            Container(
-                          width: 500,
-                          child: Image.network(
-                            banners[itemIndex].urlBanner,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: banners.map((img) {
-                          int indTemp = banners.indexOf(img);
-                          return Container(
-                            margin: EdgeInsets.all(8),
-                            height: 8,
-                            width: 8,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: bannerActual == indTemp
-                                    ? Colors.amber.shade800
-                                    : Colors.amber.shade200),
-                          );
-                        }).toList(),
-                      )
-                    ],
-                  );
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
-                return Center(child: CircularProgressIndicator());
-              },
-            ),
+            BannerPublicitarioView(),
             Expanded(
               child: FutureBuilder(
                 future: HttpHelper().fetchCategorias(),
                 builder: (context, snapshot) {
-                  List<Categoria> categorias = snapshot.data;
                   if (snapshot.hasData) {
+                    List<Categoria> categorias = snapshot.data;
                     return GridView.builder(
-                      itemCount: categorias.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3),
+                      itemCount: categorias.length,
                       itemBuilder: (context, index) => GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ListarDetalleSubcategoria(categorias[index]),
-                            )),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ListarDetalleCategorias(categorias[index]),
+                              ));
+                        },
                         child: Card(
                           child: Column(
                             children: [
                               Expanded(
-                                  child: Image.network(
-                                      categorias[index].urlBanner)),
+                                  child:
+                                      Image.network(categorias[index].urlLogo)),
                               Text(categorias[index].nombre),
                             ],
                           ),
@@ -127,14 +90,84 @@ class _CategoriasState extends State<Categorias> {
                     );
                   } else if (snapshot.hasError) {
                     return Text(snapshot.error.toString());
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }
-                  return CircularProgressIndicator();
                 },
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class BannerPublicitarioView extends StatefulWidget {
+  const BannerPublicitarioView({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _BannerPublicitarioViewState createState() => _BannerPublicitarioViewState();
+}
+
+class _BannerPublicitarioViewState extends State<BannerPublicitarioView> {
+  int bannerActual;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: HttpHelper().fetchBannersPublicitarios(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          List<BannerPublicitario> banners = snapshot.data;
+          return Column(
+            children: [
+              CarouselSlider.builder(
+                options: CarouselOptions(
+                  enlargeCenterPage: true,
+                  viewportFraction: 1.0,
+                  autoPlay: true,
+                  autoPlayInterval: Duration(seconds: 5),
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      bannerActual = index;
+                    });
+                  },
+                ),
+                itemCount: banners.length,
+                itemBuilder: (BuildContext context, int itemIndex) => Container(
+                  child: Image.network(banners[itemIndex].urlBanner,
+                      fit: BoxFit.fill),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: banners.map((img) {
+                  int indTemp = banners.indexOf(img);
+                  return Container(
+                    margin: EdgeInsets.all(8),
+                    height: 8,
+                    width: 8,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: bannerActual == indTemp
+                          ? Colors.black
+                          : Colors.black.withOpacity(0.3),
+                    ),
+                  );
+                }).toList(),
+              )
+            ],
+          );
+        }
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

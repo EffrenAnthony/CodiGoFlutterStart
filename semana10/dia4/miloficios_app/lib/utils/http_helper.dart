@@ -3,31 +3,65 @@ import 'dart:convert';
 import 'package:miloficios_app/models/banner.dart';
 import 'package:miloficios_app/models/categoria.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpHelper {
   String urlBase = 'http://192.168.0.14:8000/API/';
 
   Future<List<Categoria>> fetchCategorias() async {
-    var response = await http.get(urlBase + 'categoriasList');
+    var response = await http.get(urlBase + "categoriasList/");
     List categoriasJson = jsonDecode(response.body);
+
     return categoriasJson.map((e) => Categoria.fromJson(e)).toList();
   }
 
   Future<List<BannerPublicitario>> fetchBannersPublicitarios() async {
-    var response = await http.get(urlBase + 'bannerspublicitarios');
-    List bannersJson = jsonDecode(response.body);
-    return bannersJson.map((e) => BannerPublicitario.fromJson(e)).toList();
+    var response = await http.get(urlBase + "bannerspublicitarios/");
+    List categoriasJson = jsonDecode(response.body);
+    return categoriasJson.map((e) => BannerPublicitario.fromJson(e)).toList();
   }
 
   Future<String> iniciarSesion(String username, String password) async {
     var response = await http.post(urlBase + "token-auth/",
         body: {"username": username, "password": password});
-    print(response.toString());
+
     if (response.statusCode == 200) {
       String token = jsonDecode(response.body)["token"];
-      print(token.toString());
       return token;
     }
     return "";
+  }
+
+  Future<bool> registrarUsuario(String usuario, String password, String correo,
+      String nombre, String apellido, String dni) async {
+    var response = await http.post(urlBase + "clienteRegister/", body: {
+      "username": usuario,
+      "password": password,
+      "email": correo,
+      "first_name": nombre,
+      "last_name": apellido,
+      "dni": dni
+    });
+    print(response.body);
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future consultarUsuario(String token) async {
+    var response = await http.get(urlBase + "clienteRetrieve/",
+        headers: {"Authorization": "JWT " + token});
+    print(response.body);
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString("username", json["username"]);
+      prefs.setString("email", json["email"]);
+      prefs.setString("first_name", json["first_name"]);
+      prefs.setString("last_name", json["last_name"]);
+      prefs.setString("dni", json["dni"]);
+    }
   }
 }

@@ -18,7 +18,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Provider.of<UserProvider>(context, listen: false).fetchUserData();
+    if (Provider.of<UserProvider>(context, listen: false).token == null)
+      Provider.of<UserProvider>(context, listen: false).fetchUserData();
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: (Provider.of<UserProvider>(context).token.length > 0)
+      home: (Provider.of<UserProvider>(context).token != null &&
+              Provider.of<UserProvider>(context).token.length > 0)
           ? Categorias()
           : Login(),
     );

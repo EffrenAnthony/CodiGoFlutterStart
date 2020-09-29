@@ -3,6 +3,7 @@ import 'package:miloficios_app/main.dart';
 import 'package:miloficios_app/providers/user_provider.dart';
 import 'package:miloficios_app/utils/http_helper.dart';
 import 'package:miloficios_app/utils/sesion_helper.dart';
+import 'package:miloficios_app/views/register.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 
@@ -50,9 +51,30 @@ class _LoginState extends State<Login> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
-                    "https://img.pixers.pics/pho_wat(s3:700/FO/10/13/36/05/9/700_FO101336059_5449b2e3b28e700b8fc58dbd937e6177.jpg,700,700,cms:2018/10/5bd1b6b8d04b8_220x50-watermark.png,over,480,650,jpg)/vinilos-patrones-sin-fisuras-con-diferentes-productos-de-papeleria-y-oficina-fondo-plano-repetido-para-diseno-web-y-materiales-imprimibles.jpg.jpg",
+                    "https://images.vexels.com/media/users/3/148169/isolated/preview/dc80daf8be6e9366128d6a182c225373-fundo-quadrado-roxo-abstrato-by-vexels.png",
                   ),
                   fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 55.0),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Register(),
+                        ));
+                  },
+                  child: Text('No tienes una cuenta? Registrate',
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      )),
                 ),
               ),
             ),
