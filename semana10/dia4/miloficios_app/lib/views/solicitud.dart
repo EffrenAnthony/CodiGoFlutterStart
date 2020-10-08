@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:miloficios_app/models/categoria.dart';
+import 'package:miloficios_app/providers/user_provider.dart';
+import 'package:miloficios_app/utils/http_helper.dart';
+import 'package:provider/provider.dart';
 
 class CrearSolicitud extends StatefulWidget {
   Categoria categoria;
 
   CrearSolicitud(this.categoria);
-
   @override
   _CrearSolicitudState createState() => _CrearSolicitudState(categoria);
 }
@@ -13,53 +15,73 @@ class CrearSolicitud extends StatefulWidget {
 class _CrearSolicitudState extends State<CrearSolicitud> {
   Categoria categoria;
   _CrearSolicitudState(this.categoria);
+
+  TextEditingController _controllerDescripcion = TextEditingController();
+  TextEditingController _controllerPrecio = TextEditingController();
+
+  void RegistrarSolicitud() async {
+    await HttpHelper().registrarSolicitud(
+        _controllerDescripcion.text,
+        _controllerPrecio.text,
+        categoria.id.toString(),
+        Provider.of<UserProvider>(context, listen: false).token);
+
+    Navigator.pop(context, "Solicitud Enviada");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
+      appBar: AppBar(
+        title: Text("Solicitud: " + categoria.nombre),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text('Descripción:'),
+              Text("Descripción:"),
               TextField(
+                controller: _controllerDescripcion,
                 keyboardType: TextInputType.multiline,
-                maxLines: 10,
+                maxLines: 8,
                 decoration: InputDecoration(
-                    hintText: 'Indicanos que servicio necesitas'),
+                    hintText: "Indicanos que servicio necesitas"),
               ),
               SizedBox(
-                height: 15,
+                height: 8,
               ),
-              Text('Texto Referencial:'),
+              Text("Precio referencial:"),
               TextField(
+                controller: _controllerPrecio,
                 keyboardType: TextInputType.number,
                 decoration:
-                    InputDecoration(prefix: Text('s/.'), hintText: '000'),
+                    InputDecoration(prefix: Text("S/"), hintText: "000"),
               ),
               SizedBox(
-                height: 15,
+                height: 8,
               ),
-              Text('Foto Referencial:'),
+              Text("Foto referencial:"),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: RaisedButton(
                   onPressed: () {},
                   child: Icon(
-                    Icons.photo_camera,
+                    Icons.camera_alt,
                     size: 100,
                   ),
                 ),
               ),
-              SizedBox(
-                height: 15,
-              ),
               RaisedButton(
-                onPressed: () {},
-                child: Text('Enviar'),
+                onPressed: () {
+                  RegistrarSolicitud();
+                },
+                child: Text("Enviar"),
               )
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

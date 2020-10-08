@@ -4,7 +4,7 @@ from .models import *
 class SubCategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategoria
-        fields = ['categoria','nombre', 'urlBanner', 'urlLogo']
+        fields = ['id','categoria','nombre', 'urlBanner', 'urlLogo']
 class CategoriaSerializer(serializers.ModelSerializer):
     subcategorias = SubCategoriaSerializer(many=True)
     class Meta:
@@ -38,3 +38,15 @@ class ClienteSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class SolicitudSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Solicitud
+        fields = ['subcategoria', 'descripcion', 'precio', 'cliente']
+
+class RespuestaSolicitudSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = RespuestaSolicitud
+        fields = ['solicitud', 'descripcion', 'precio', 'numero_contacto']

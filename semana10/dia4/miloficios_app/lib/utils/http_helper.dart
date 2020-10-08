@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:miloficios_app/models/banner.dart';
 import 'package:miloficios_app/models/categoria.dart';
 import 'package:http/http.dart' as http;
+import 'package:miloficios_app/models/solicitud_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HttpHelper {
@@ -63,5 +65,43 @@ class HttpHelper {
       prefs.setString("last_name", json["last_name"]);
       prefs.setString("dni", json["dni"]);
     }
+  }
+
+  Future<bool> registrarSolicitud(String descripcion, String precio,
+      String subcategoria, String token) async {
+    var response = await http.post(urlBase + "solicitudes/", headers: {
+      "Authorization": "JWT " + token
+    }, body: {
+      "descripcion": descripcion,
+      "precio": precio,
+      "subcategoria": subcategoria,
+    });
+    print(response.body);
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<List<SolicitudModel>> consultarSolicitudes(String token) async {
+    var response = await http.get(
+      urlBase + "solicitudes/",
+      headers: {"Authorization": "JWT " + token},
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      List solicitudesJson = jsonDecode(response.body);
+      return solicitudesJson.map((e) => SolicitudModel.fromJson(e)).toList();
+    }
+    return null;
+  }
+
+  Future consultarRespuestaSolicitud(String token) async {
+    var response = await http.get(
+      urlBase + "respuestassolicitud/",
+      headers: {"Authorization": "JWT " + token},
+    );
+    print(response.body);
   }
 }

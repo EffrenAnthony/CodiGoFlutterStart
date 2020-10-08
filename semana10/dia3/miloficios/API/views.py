@@ -56,3 +56,19 @@ class ClienteRetrieve(generics.RetrieveAPIView):
   def get_object(self):
     return self.request.user
     # return Cliente.objects.filter(id=self.request.user.id).first()
+@permission_classes((AllowAny, ))
+class SolicitudCreate(generics.ListCreateAPIView):
+    queryset = Solicitud.objects.all()
+    serializer_class = SolicitudSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(cliente=Cliente.objects.get(pk=self.request.user.id))
+
+    def get_queryset(self):
+        return Solicitud.objects.filter(cliente__pk=self.request.user.pk).all()
+
+
+@permission_classes((AllowAny, ))
+class RespuestaSolicitudList(generics.ListAPIView):
+    queryset = RespuestaSolicitud.objects.all()
+    serializer_class = RespuestaSolicitudSerializer
