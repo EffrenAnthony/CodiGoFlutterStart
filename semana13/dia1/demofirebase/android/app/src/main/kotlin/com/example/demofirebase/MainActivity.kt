@@ -1,0 +1,6 @@
+package com.example.demofirebase
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
