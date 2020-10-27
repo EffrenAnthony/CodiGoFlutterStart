@@ -4,6 +4,7 @@ import 'package:codigo_chat/utils/preferencias.dart';
 import 'package:codigo_chat/views/chats.dart';
 import 'package:codigo_chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUp extends StatefulWidget {
   Function cambiarVista;
@@ -20,6 +21,48 @@ class _SignUpState extends State<SignUp> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AuthService authService = AuthService();
   FirestoreHelper firestoreHelper = FirestoreHelper();
+
+  signUpGoogle() async {
+    await authService.singUpGoogle().then((value) {
+      if (value != null) {
+        Map<String, String> user = {
+          "userName": value.displayName,
+          "userEmail": value.email,
+          "uid": value.uid
+        };
+        firestoreHelper.addUserInfo(user);
+        Preferencias().saveEmail(value.email);
+        Preferencias().saveUserName(value.displayName);
+        Preferencias().saveLogInState(true);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chats(),
+            ));
+      }
+    });
+  }
+
+  signUpFacebook() async {
+    await authService.singUpFacebook().then((value) {
+      if (value != null) {
+        Map<String, String> user = {
+          "userName": value.displayName,
+          "userEmail": value.email,
+          "uid": value.uid
+        };
+        firestoreHelper.addUserInfo(user);
+        Preferencias().saveEmail(value.email);
+        Preferencias().saveUserName(value.displayName);
+        Preferencias().saveLogInState(true);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Chats(),
+            ));
+      }
+    });
+  }
 
   signUp() async {
     if (formKey.currentState.validate()) {
@@ -109,6 +152,18 @@ class _SignUpState extends State<SignUp> {
                 signUp();
               },
               child: Text("Registrarse"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                signUpFacebook();
+              },
+              child: Text("Registrarse con Facebook"),
+            ),
+            RaisedButton(
+              onPressed: () {
+                signUpGoogle();
+              },
+              child: Text("Registrarse con Google"),
             ),
             SizedBox(
               height: 16,

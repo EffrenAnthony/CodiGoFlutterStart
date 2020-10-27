@@ -5,6 +5,7 @@ import 'package:codigo_chat/utils/preferencias.dart';
 import 'package:codigo_chat/views/chats.dart';
 import 'package:codigo_chat/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class LogIn extends StatefulWidget {
   Function cambiarVista;
@@ -21,6 +22,20 @@ class _LogInState extends State<LogIn> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AuthService authService = AuthService();
   FirestoreHelper firestoreHelper = FirestoreHelper();
+
+  logInFacebook() async {
+    authService.singUpFacebook().then((value) async {
+      QuerySnapshot usr = await firestoreHelper.getUserInfo(value.email);
+      Preferencias().saveEmail(emailController.text);
+      await Preferencias().saveUserName(usr.docs[0]["userName"]);
+      Preferencias().saveLogInState(true);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Chats(),
+          ));
+    });
+  }
 
   logIn() async {
     if (formKey.currentState.validate()) {
@@ -92,6 +107,15 @@ class _LogInState extends State<LogIn> {
                 logIn();
               },
               child: Text("Registrarse"),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            RaisedButton(
+              onPressed: () {
+                logInFacebook();
+              },
+              child: Text("Inicia Sesion Con facebook"),
             ),
             SizedBox(
               height: 16,
