@@ -1,6 +1,9 @@
 import 'dart:ffi';
+import 'package:demo_google_maps/camera_screen.dart';
 import 'package:demo_google_maps/dbHelper.dart';
+import 'package:demo_google_maps/manage_places.dart';
 import 'package:demo_google_maps/place.dart';
+import 'package:demo_google_maps/place_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -49,29 +52,37 @@ class _MainMapState extends State<MainMap> {
     return _position;
   }
 
-  void addMarker(Position pos, String markerId, String markerTitle) {
+  void addMarker(
+      Position pos, String markerId, String markerTitle, Place place) {
     Marker marker = Marker(
         markerId: MarkerId(markerId),
         position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(title: markerTitle));
+        infoWindow: InfoWindow(title: markerTitle),
+        onTap: () async {
+          PlaceDialog pd = PlaceDialog(place, true);
+          await showDialog(
+            context: context,
+            builder: (context) => pd.buildAlert(context),
+          );
+          _getData();
+        },
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure));
     markers.add(marker);
-    setState(() {
-      markers = markers;
-    });
   }
 
   Future _getData() async {
     await dbHelper.openDb();
     places = await dbHelper.getPlaces();
+
+    print("Got ${places.length} places");
     for (Place p in places) {
       print("Place " + Position(latitude: p.lat, longitude: p.lon).toString());
 
-      addMarker(
-          Position(latitude: p.lat, longitude: p.lon), p.id.toString(), p.name);
+      addMarker(Position(latitude: p.lat, longitude: p.lon), p.id.toString(),
+          p.name, p);
     }
     setState(() {
       markers = markers;
-      places = places;
     });
   }
 
@@ -79,10 +90,10 @@ class _MainMapState extends State<MainMap> {
   void initState() {
     _getCurrentLocation().then((value) {
       print(value.toString());
-      addMarker(value, "currpos", "Usted esta aqui");
+      addMarker(value, "currpos", "Usted esta aqui", Place(0, "", 0, 0, ""));
       setState(() {
-        position = CameraPosition(
-            target: LatLng(value.target.latitude, value.target.longitude));
+        position =
+            CameraPosition(target: LatLng(value.latitude, value.longitude));
       });
     });
     dbHelper = DbHelper();
@@ -96,21 +107,33 @@ class _MainMapState extends State<MainMap> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Codigo mapa"),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () async {
+                await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ManagePlaces(),
+                    ));
+                _getData();
+              })
+        ],
       ),
       body: Container(
         child: GoogleMap(
-          onTap: (argument) {},
+          onTap: (argument) async {
+            PlaceDialog pd = PlaceDialog(
+                Place(0, "", argument.latitude, argument.longitude, ""), true);
+            await showDialog(
+              context: context,
+              builder: (context) => pd.buildAlert(context),
+            );
+            _getData();
+          },
           initialCameraPosition: position,
           markers: Set<Marker>.of(markers),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print(markers);
-          for (Marker m in markers) {
-            print(m.position.toString());
-          }
-        },
       ),
     );
   }

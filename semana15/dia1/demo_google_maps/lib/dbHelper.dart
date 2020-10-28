@@ -36,11 +36,27 @@ class DbHelper {
 
   Future<List<Place>> getPlaces() async {
     List<Map<String, dynamic>> maps = await db.query('places');
+    // for (var m in maps) {
+    //   print(m);
+    // }
     List<Place> places = List.generate(
         maps.length,
-        (index) => Place(maps[index]["id"], maps[index]["name"],
+        (index) => Place(maps[index]["ID"], maps[index]["name"],
             maps[index]["lat"], maps[index]["lon"], maps[index]["image"]));
 
     return places;
+  }
+
+  Future<int> insertPlace(Place place) async {
+    int id = await db.insert('places', place.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    print(id);
+    return id;
+  }
+
+  Future<int> deletePlace(Place place) async {
+    int id = await db.delete('places', where: "id=?", whereArgs: [place.id]);
+    print(id);
+    return id;
   }
 }
