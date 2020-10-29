@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "100409702205",
+    "firebase_url": "https://fir-maps-294000.firebaseio.com",
+    "project_id": "firebase-maps-294000",
+    "storage_bucket": "firebase-maps-294000.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100409702205:android:9024e61fa8135cb6bab754",
+        "android_client_info": {
+          "package_name": "com.firebase_maps.firebase_maps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "100409702205-qkamvgvstjta35k7jggc8v1h992ickuf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR_XW6h4rzLEkWnNLYl42502XYJlqohkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "100409702205-qkamvgvstjta35k7jggc8v1h992ickuf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
