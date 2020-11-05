@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reconocimiento_imagenes/barcode.dart';
+import 'package:reconocimiento_imagenes/barcode_reader.dart';
 import 'package:reconocimiento_imagenes/detalle.dart';
 import 'package:reconocimiento_imagenes/image_labeler.dart';
 import 'package:reconocimiento_imagenes/text_recognizer.dart';

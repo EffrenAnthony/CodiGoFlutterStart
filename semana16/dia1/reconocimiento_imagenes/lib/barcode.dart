@@ -4,15 +4,15 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class BarcodeReader extends StatefulWidget {
+class BarcodeReader2 extends StatefulWidget {
   File file;
-  BarcodeReader(this.file);
+  BarcodeReader2(this.file);
 
   @override
-  _BarcodeReaderState createState() => _BarcodeReaderState();
+  _BarcodeReader2State createState() => _BarcodeReader2State();
 }
 
-class _BarcodeReaderState extends State<BarcodeReader> {
+class _BarcodeReader2State extends State<BarcodeReader2> {
   String result;
   Future decode() async {
     FirebaseVisionImage ourImage = FirebaseVisionImage.fromFile(widget.file);
