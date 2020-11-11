@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:spotifyapi/album_detail.dart';
 import 'package:spotifyapi/models/album.dart';
 import 'package:spotifyapi/models/artist.dart';
 import 'package:spotifyapi/models/song.dart';
+import 'package:spotifyapi/spotify_api.dart';
 
 class ArtistDetail extends StatefulWidget {
   String id;
@@ -15,17 +17,11 @@ class ArtistDetail extends StatefulWidget {
 class _ArtistDetailState extends State<ArtistDetail> {
   List albums = [];
   List songs = [];
-  String token =
-      "Bearer BQDBtuuOAaiZvUiRA2-N_vV_ZMOVUNOdNRtcOTPRMz9iXR7NIb8fOUJrPb93DzFrIYKbIS_xEtPymuAr3W5IDUzNOQKtHa7qoYEiSqz6NLeusatczLyXBljLAdvACqGjjfzND4rYMDBmFYSciHr7HMu90eYPNe6g58bqSwZex2s3dZWZsyxv55jFkDKtfLMz-qd8gjg9EwhUdyjiEd3CYtHJIV991Q6tD2B4XvO8X10C4AqmtMAwxYDesZmiA3QmGm0O5GiLaffUOmtOvTXb";
 
   void getAlbums() async {
-    Response response = await Dio().get(
-      "https://api.spotify.com/v1/artists/${widget.id}/albums",
-      options: Options(
-        headers: {
-          "Authorization": token,
-        },
-      ),
+    Dio dio = SpotifyAPI.createDio();
+    Response response = await dio.get(
+      "artists/${widget.id}/albums",
     );
     var jsonArtists = response.data["items"];
     albums = jsonArtists.map((e) => Album.fromJson(e)).toList();
@@ -35,14 +31,10 @@ class _ArtistDetailState extends State<ArtistDetail> {
   }
 
   void getSongs() async {
-    Response response = await Dio().get(
-      "https://api.spotify.com/v1/artists/${widget.id}/top-tracks?market=PE",
-      options: Options(
-        headers: {
-          "Authorization": token,
-        },
-      ),
-    );
+    Dio dio = SpotifyAPI.createDio();
+    Response response = await dio.get(
+        "artists/${widget.id}/top-tracks?market=PE",
+        options: Options(headers: {"requiresToken": true}));
     var jsonArtists = response.data["tracks"];
     print(response.data["tracks"]);
     songs = jsonArtists.map((e) => Song.fromJson(e)).toList();
@@ -75,21 +67,29 @@ class _ArtistDetailState extends State<ArtistDetail> {
               itemCount: albums.length,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) => Card(
-                child: Container(
-                  child: Column(
-                    children: [
-                      Image.network(
-                        albums[index].images[0].url,
-                        height: 100,
-                        width: 100,
-                      ),
-                      Text(
-                        albums[index].name,
-                      ),
-                      Text(
-                        albums[index].releaseDate,
-                      ),
-                    ],
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AlbumDetail(albums[index].id, albums[index].name),
+                      )),
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Image.network(
+                          albums[index].images[0].url,
+                          height: 100,
+                          width: 100,
+                        ),
+                        Text(
+                          albums[index].name,
+                        ),
+                        Text(
+                          albums[index].releaseDate,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
