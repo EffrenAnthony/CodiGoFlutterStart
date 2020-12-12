@@ -50,76 +50,82 @@ class _HouseOverviewState extends State<HouseOverview> {
                     //     ),
                     fit: BoxFit.fill)),
           ),
-          Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(20),
-                height: 300,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(300),
-                  child: nombreCasa.toLowerCase() == 'gryffindor'
-                      ? Image.asset('assets/gryffindor.jpg', fit: BoxFit.cover)
-                      : nombreCasa.toLowerCase() == 'hufflepuff'
-                          ? Image.asset('assets/hufflepuff.jpg',
-                              fit: BoxFit.cover)
-                          : nombreCasa.toLowerCase() == 'ravenclaw'
-                              ? Image.asset('assets/ravenclaw.jpg',
-                                  fit: BoxFit.cover)
-                              : Image.asset('assets/slytherin.jpg',
-                                  fit: BoxFit.cover),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(20),
+                  height: 300,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(300),
+                    child: nombreCasa.toLowerCase() == 'gryffindor'
+                        ? Image.asset('assets/gryffindor.jpg',
+                            fit: BoxFit.cover)
+                        : nombreCasa.toLowerCase() == 'hufflepuff'
+                            ? Image.asset('assets/hufflepuff.jpg',
+                                fit: BoxFit.cover)
+                            : nombreCasa.toLowerCase() == 'ravenclaw'
+                                ? Image.asset('assets/ravenclaw.jpg',
+                                    fit: BoxFit.cover)
+                                : Image.asset('assets/slytherin.jpg',
+                                    fit: BoxFit.cover),
+                  ),
                 ),
-              ),
-              personajes.length > 0
-                  ? Expanded(
-                      child: ListView.builder(
-                        itemCount: personajes.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            color: Colors.black87,
-                            child: Container(
-                              height: 100,
-                              child: Center(
-                                child: ListTile(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CharacterView(personajes[index]),
-                                        ));
-                                  },
-                                  title: Text(personajes[index].name,
-                                      style: TextStyle(color: Colors.white)),
-                                  subtitle: Text(
-                                      'Specie: ' +
-                                          personajes[index]
-                                              .species
-                                              .toUpperCase(),
-                                      style: TextStyle(color: Colors.white)),
-                                  trailing: personajes[index].hogwartsStaff
-                                      ? Icon(
-                                          Icons.grade,
-                                          color: Colors.amber,
-                                        )
-                                      : Icon(
-                                          Icons.person,
-                                          color: Colors.blueAccent.shade700,
-                                        ),
-                                  leading: CircleAvatar(
-                                    radius: 30,
-                                    backgroundImage: NetworkImage(
-                                      personajes[index].image,
+                personajes.length > 0
+                    ? Container(
+                        height: 400,
+                        child: ListView.builder(
+                          itemCount: personajes.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              color: Colors.black87,
+                              child: Container(
+                                height: 100,
+                                child: Center(
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CharacterView(
+                                                personajes[index]),
+                                          ));
+                                    },
+                                    title: Text(personajes[index].name,
+                                        style: TextStyle(color: Colors.white)),
+                                    subtitle: Text(
+                                        'Specie: ' +
+                                            personajes[index]
+                                                .species
+                                                .toUpperCase(),
+                                        style: TextStyle(color: Colors.white)),
+                                    trailing: personajes[index].hogwartsStaff
+                                        ? Icon(
+                                            Icons.grade,
+                                            color: Colors.amber,
+                                          )
+                                        : Icon(
+                                            Icons.person,
+                                            color: Colors.blueAccent.shade700,
+                                          ),
+                                    leading: CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                        personajes[index].image,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    )
-                  : Expanded(child: Center(child: CircularProgressIndicator())),
-            ],
+                            );
+                          },
+                        ),
+                      )
+                    : Container(
+                        height: 400,
+                        child: Center(child: CircularProgressIndicator())),
+              ],
+            ),
           ),
         ],
       ),
